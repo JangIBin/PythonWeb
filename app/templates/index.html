@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastAPI Web Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/index.css') }}">
+    <title>Welcome</title>
 </head>
 <body>
-    <h1>アカウント登録</h1>
-    <form action="/register" method="post">
-        <label for="username">ユーザー名:</label>
-        <input type="text" id="username" name="username" required><br>
-
-        <label for="email">メール:</label>
-        <input type="email" id="email" name="email" required><br>
-
-        <label for="password">パスワード:</label>
-        <input type="password" id="password" name="password" required><br>
-
-        <button type="submit">アカウント登録</button>
-    </form>
+    <div class="container">
+        <div>
+            <h1>ようこそ！</h1>
+        </div>
+        <div>
+            <a href="/login">
+                <button>ログイン</button>
+            </a>
+            <a href="/signup">
+                <button>会員登録</button>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

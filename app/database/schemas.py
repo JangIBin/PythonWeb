@@ -15,3 +15,8 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+# ユーザー情報
+class Token(BaseModel):
+    access_token: str
+    token_type: str

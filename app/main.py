@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from app.database.connection import engine, Base
 from app.routes.routes import router
 import os
@@ -13,6 +14,8 @@ app = FastAPI()
 # async def root():
 #     env = os.getenv("APP_ENV", "unknown")
 #     return {"message": f"Running in {env} environment"}
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 templates = Jinja2Templates(directory="app/templates")
 

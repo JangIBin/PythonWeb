@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task</title>
+</head>
+<body>
+    <h1>タスク更新</h1>
+    <form action="/task/update/{{ task.id }}" method="post">
+        <label>Status:</label>
+        <select name="status" required>
+            <option value="未開始" {% if task.status == "未開始" %}selected{% endif %}>未開始</option>
+            <option value="進行中" {% if task.status == "進行中" %}selected{% endif %}>進行中</option>
+            <option value="確認中" {% if task.status == "確認中" %}selected{% endif %}>確認中</option>
+            <option value="完了" {% if task.status == "完了" %}selected{% endif %}>完了</option>
+        </select><br>
+
+        <label>Task Name:</label>
+        <input type="text" name="task_name" value="{{ task.task_name }}" required><br>
+
+        <label>Due Date:</label>
+        <input type="date" name="due_date" value="{{ task.due_date }}"><br>
+
+        <label>Content:</label>
+        <textarea name="task_content">{{ task.task_content }}</textarea><br>
+
+        <label>Remarks:</label>
+        <textarea name="remarks">{{ task.remarks }}</textarea><br>
+
+        <button type="submit">更新</button>
+    </form>
+    <br>
+    <a href="/task">
+        <button>戻る</button>
+    </a>
+</body>
+</html>

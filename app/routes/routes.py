@@ -3,6 +3,7 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from datetime import date
 from app.database.connection import get_db
 from app.models.models import User, Task
 from app.util.auth import get_password_hash, verify_password, create_access_token
@@ -62,13 +63,27 @@ async def signup(
 
 # Task ページ (GET)
 @router.get("/task", response_class=HTMLResponse)
-async def render_task_page(request: Request):
-    return templates.TemplateResponse("task.html", {"request": request})
+async def get_tasks(request: Request, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Task))
+    tasks = result.scalars().all()
+    return templates.TemplateResponse("task.html", {"request": request, "tasks": tasks})
 
 # Task 追加ページ (GET)
 @router.get("/task/add", response_class=HTMLResponse)
 async def render_add_task_page(request: Request):
     return templates.TemplateResponse("addTask.html", {"request": request})
+
+# Task 修正ページ (GET)
+@router.get("/task/update/{task_id}", response_class=HTMLResponse)
+async def render_update_task_page(task_id: int, request: Request, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Task).where(Task.id == task_id))
+    task = result.scalars().first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return templates.TemplateResponse(
+        "updateTask.html", 
+        {"request": request, "task": task}
+    )
 
 @router.post("/task/add")
 async def add_task(

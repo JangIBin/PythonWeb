@@ -22,6 +22,6 @@ class Task(Base):
     task_name = Column(String, nullable=False)
     due_date = Column(Date, nullable=False)
     task_content = Column(Text, nullable=True)
-    remarks = Column(Text, nullable=True)
+    remarks = Column(Text)
 
     __table_args__ = {'extend_existing': True}

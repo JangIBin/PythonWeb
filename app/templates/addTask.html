@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+</head>
+<body>
+    <h1>タスク追加</h1>
+    <form action="/task/add" method="post">
+        <label>Status:</label>
+        <input type="text" name="status" required><br>
+        <label>Task Name:</label>
+        <input type="text" name="task_name" required><br>
+        <label>Due Date:</label>
+        <input type="date" name="due_date" required><br>
+        <label>Content:</label>
+        <textarea name="task_content"></textarea><br>
+        <label>Remarks:</label>
+        <textarea name="remarks"></textarea><br>
+        <button type="submit">追加</button>
+    </form>
+    <br>
+    <a href="/task">
+        <button>戻る</button>
+    </a>
+</body>
+</html>

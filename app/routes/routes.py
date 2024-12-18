@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.database.connection import get_db
-from app.models.models import User
+from app.models.models import User, Task
 from app.util.auth import get_password_hash, verify_password, create_access_token
 
 router = APIRouter()
@@ -64,3 +64,71 @@ async def signup(
 @router.get("/task", response_class=HTMLResponse)
 async def render_task_page(request: Request):
     return templates.TemplateResponse("task.html", {"request": request})
+
+# Task 追加ページ (GET)
+@router.get("/task/add", response_class=HTMLResponse)
+async def render_add_task_page(request: Request):
+    return templates.TemplateResponse("addTask.html", {"request": request})
+
+@router.post("/task/add")
+async def add_task(
+    status: str = Form(...),
+    task_name: str = Form(...),
+    due_date: str = Form(...),
+    task_content: str = Form(None),
+    remarks: str = Form(None),
+    db: AsyncSession = Depends(get_db),
+):
+    new_task = Task(
+        status=status,
+        task_name=task_name,
+        due_date=date.fromisoformat(due_date),
+        task_content=task_content,
+        remarks=remarks,
+    )
+    db.add(new_task)
+    await db.commit()
+    # 追加後に task ページにリダイレクト
+    return RedirectResponse(url="/task", status_code=303)
+
+# タスク修正
+@router.post("/task/update/{task_id}")
+async def update_task(
+    task_id: int,
+    status: str = Form(None),
+    task_name: str = Form(None),
+    due_date: str = Form(None),
+    task_content: str = Form(None),
+    remarks: str = Form(None),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(select(Task).where(Task.id == task_id))
+    task = result.scalars().first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    if status:
+        task.status = status
+    if task_name:
+        task.task_name = task_name
+    if due_date:
+        task.due_date = date.fromisoformat(due_date)
+    if task_content:
+        task.task_content = task_content
+    if remarks:
+        task.remarks = remarks
+
+    await db.commit()
+    return RedirectResponse(url="/task", status_code=303)
+
+# タスク削除
+@router.post("/task/delete/{task_id}")
+async def delete_task(task_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Task).where(Task.id == task_id))
+    task = result.scalars().first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    await db.delete(task)
+    await db.commit()
+    return RedirectResponse(url="/task", status_code=303)
